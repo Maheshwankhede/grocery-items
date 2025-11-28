@@ -374,6 +374,33 @@
     flex-shrink: 0;
   }
 
+  .contact-picker-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .contact-picker-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .contact-picker-btn:active {
+    transform: translateY(0);
+  }
+
+  .contact-picker-btn.hidden {
+    display: none;
+  }
+
   .share-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
@@ -478,6 +505,12 @@
       font-size: 18px;
     }
 
+    .contact-picker-btn {
+      padding: 9px 10px;
+      font-size: 16px;
+      min-width: 45px;
+    }
+
     .item-row {
       padding: 12px;
     }
@@ -521,6 +554,14 @@
       font-size: 12px;
     }
 
+    #userName {
+      flex: 1 !important;
+    }
+
+    #waNumber {
+      flex: 0.9 !important;
+    }
+
     .footer-fixed {
       padding: 6px 10px;
     }
@@ -540,6 +581,11 @@
     .share-btn {
       padding: 9px 8px;
       min-width: 45px;
+    }
+
+    .contact-picker-btn {
+      padding: 9px 8px;
+      min-width: 40px;
     }
   }
 </style>
@@ -613,6 +659,9 @@
         inputmode="numeric"
         style="flex: 1;"
       />
+      <button class="contact-picker-btn hidden" id="contactPickerBtn" title="फोनबुक मधून निवडा">
+        <i class="bi bi-person-lines-fill"></i>
+      </button>
       <button class="share-btn" id="shareBtn">
         <i class="bi bi-whatsapp"></i>
         <span class="d-none d-sm-inline">शेअर</span>
@@ -1326,6 +1375,51 @@
   document.getElementById('userName').addEventListener('input', (e) => {
     localStorage.setItem('userName', e.target.value.trim());
   });
+
+  // Contact Picker API - Select from phonebook
+  const contactPickerBtn = document.getElementById('contactPickerBtn');
+  const waNumberInput = document.getElementById('waNumber');
+
+  // Check if Contact Picker API is supported
+  if ('contacts' in navigator && 'ContactsManager' in window) {
+    // Show the contact picker button
+    contactPickerBtn.classList.remove('hidden');
+
+    contactPickerBtn.addEventListener('click', async () => {
+      try {
+        const props = ['tel'];
+        const opts = { multiple: false };
+
+        const contacts = await navigator.contacts.select(props, opts);
+        
+        if (contacts.length > 0) {
+          const contact = contacts[0];
+          if (contact.tel && contact.tel.length > 0) {
+            // Get the first phone number and clean it
+            let phoneNumber = contact.tel[0];
+            // Remove spaces, dashes, parentheses, and +91 prefix
+            phoneNumber = phoneNumber.replace(/[\s\-\(\)\+]/g, '');
+            // If it starts with 91 and is longer than 10 digits, remove 91
+            if (phoneNumber.startsWith('91') && phoneNumber.length > 10) {
+              phoneNumber = phoneNumber.substring(2);
+            }
+            
+            // Set the phone number in the input
+            waNumberInput.value = phoneNumber;
+            
+            // Save to localStorage
+            localStorage.setItem('waNumber', phoneNumber);
+          }
+        }
+      } catch (error) {
+        // User cancelled or error occurred
+        if (error.name !== 'AbortError') {
+          console.error('Contact picker error:', error);
+          alert('संपर्क निवडण्यात त्रुटी झाली. कृपया नंबर टाका.');
+        }
+      }
+    });
+  }
 
   // Share button - Show alert instead of opening WhatsApp
   document.getElementById('shareBtn').addEventListener('click', () => {
