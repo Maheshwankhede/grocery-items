@@ -675,6 +675,12 @@
 
 <script>
 (function(){
+  // App configuration
+  const APP_CONFIG = {
+    appUrl: 'https://maheshwankhede.github.io/grocery-items',
+    showAppLink: true  // Set to false if you don't want to show the link
+  };
+
   // Comprehensive Kirana and Grocery Data with Marathi translations
   const SECTIONS = [
     {
@@ -1527,9 +1533,17 @@
     
     // Add name at bottom if provided, otherwise show phone
     if(userName) {
-      message += `👤 ग्राहकाचे नाव: ${userName}`;
+      message += `👤 ग्राहकाचे नाव: ${userName}\n`;
     } else {
-      message += `📱 ${phone}`;
+      message += `📱 ${phone}\n`;
+    }
+    
+    // Add app link for promotion
+    if(APP_CONFIG.showAppLink) {
+      message += '\n━━━━━━━━━━━━━━━━━━━━━━\n';
+      message += '📱 *ही यादी Grocery List App ने तयार केली आहे*\n';
+      message += '*यादी करण्यासाठी खालील लिंक वर क्लिक करा*\n';
+      message += `${APP_CONFIG.appUrl}`;
     }
     
     // Also prepare WhatsApp link (optional - user can choose)
