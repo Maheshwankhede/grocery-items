@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Grocery & Kirana Checklist</title>
+
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
+  
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding-bottom: 140px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .app-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  .app-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .app-header p {
+    font-size: 14px;
+    opacity: 0.95;
+    margin: 0;
+  }
+
+  /* Search Bar */
+  .search-container {
+    margin-bottom: 20px;
+  }
+
+  .search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 14px 20px 14px 50px;
+    font-size: 15px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+
+  .search-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 18px;
+  }
+
+  .section-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .section-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+  }
+
+  .section-card.hidden {
+    display: none;
+  }
+
+  .section-header {
+    padding: 18px 20px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+    transition: all 0.3s ease;
+  }
+
+  .section-header:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  }
+
+  .section-header.kirana-header {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe0b2 100%);
+    border-bottom: 2px solid #ff9800;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2c3e50;
+  }
+
+  .section-meta {
+    font-size: 13px;
+    color: #6c757d;
+    margin-top: 4px;
+  }
+
+  .counter-badge {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+  }
+
+  .chevron-icon {
+    transition: transform 0.3s ease;
+    font-size: 20px;
+    color: #495057;
+  }
+
+  .chevron-icon.rotated {
+    transform: rotate(180deg);
+  }
+
+  .section-body {
+    padding: 15px;
+    background: #fafbfc;
+  }
+
+  .item-row {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+  }
+
+  .item-row:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateX(5px);
+  }
+
+  .item-row.checked {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left: 4px solid #28a745;
+  }
+
+  .item-row.hidden {
+    display: none !important;
+  }
+
+  .sr-number {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6c757d;
+    min-width: 35px;
+    text-align: center;
+  }
+
+  .item-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #2c3e50;
+    flex: 1;
+  }
+
+  .item-name-marathi {
+    font-size: 13px;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .form-check-input {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border: 2px solid #ced4da;
+  }
+
+  .form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .qty-input {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .qty-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+
+  /* Delete button for custom items */
+  .delete-btn {
+    background: #dc3545;
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .delete-btn:hover {
+    background: #c82333;
+    transform: scale(1.1);
+  }
+
+  /* Add Item Button */
+  .add-item-btn {
+    background: var(--success-gradient);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .add-item-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+  }
+
+  /* Fixed Footer */
+  .footer-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 20px 15px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-top: 3px solid #667eea;
+  }
+
+  .wa-input {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+
+  .wa-input:focus {
+    border-color: #25d366;
+    box-shadow: 0 0 0 0.2rem rgba(37, 211, 102, 0.25);
+  }
+
+  .share-btn {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+  }
+
+  .share-btn:active {
+    transform: translateY(0);
+  }
+
+  .footer-hint {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #6c757d;
+  }
+
+  .empty-state i {
+    font-size: 48px;
+    opacity: 0.5;
+    margin-bottom: 15px;
+  }
+
+  /* No results message */
+  .no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+  }
+
+  .no-results i {
+    font-size: 60px;
+    opacity: 0.3;
+    margin-bottom: 15px;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .section-card {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 576px) {
+    .app-header h1 {
+      font-size: 20px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+    }
+    
+    .item-name {
+      font-size: 14px;
+    }
+    
+    .qty-input {
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+    
+    .share-btn {
+      padding: 12px 20px;
+      font-size: 14px;
+    }
+
+    .item-row {
+      padding: 12px;
+    }
+
+    .sr-number {
+      min-width: 28px;
+      font-size: 13px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="app-header">
+  <div class="container">
+    <h1>
+      <i class="bi bi-cart-check-fill"></i>
+      Grocery & Kirana Checklist
+    </h1>
+    <p>
+      <i class="bi bi-phone-fill"></i>
+      Check items, add quantities, and share your shopping list!
+    </p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  
+  <!-- Search Bar -->
+  <div class="search-container position-relative">
+    <i class="bi bi-search search-icon"></i>
+    <input 
+      type="text" 
+      id="searchInput" 
+      class="form-control search-input" 
+      placeholder="Search items... (e.g., Sugar, साखर, Oil, तेल)"
+    />
+  </div>
+
+  <!-- No Results Message -->
+  <div id="noResults" class="no-results" style="display: none;">
+    <i class="bi bi-search"></i>
+    <h5>No items found</h5>
+    <p>Try a different search term</p>
+  </div>
+
+  <div id="listWrap">
+    <!-- Sections will be injected by JavaScript -->
+  </div>
+</div>
+
+<!-- Fixed Footer -->
+<div class="footer-fixed">
+  <div class="container">
+    <div class="row g-2 align-items-center">
+      <div class="col-12 col-md-7">
+        <input 
+          type="tel" 
+          id="waNumber" 
+          class="form-control wa-input" 
+          placeholder="Enter WhatsApp number (e.g., 9812345678)" 
+          inputmode="numeric"
+        />
+      </div>
+      <div class="col-12 col-md-5">
+        <button class="share-btn w-100" id="shareBtn">
+          <i class="bi bi-whatsapp"></i>
+          Share to WhatsApp
+        </button>
+      </div>
+    </div>
+    <div class="footer-hint">
+      <i class="bi bi-info-circle"></i>
+      Use country code for international (e.g., 91 for India)
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+(function(){
+  // Comprehensive Kirana and Grocery Data with Marathi translations
+  const SECTIONS = [
+    {
+      id: 'grains',
+      title: 'Grains & Flours (अन्नधान्ये आणि पीठ)',
+      icon: 'bi-shop',
+      items: [
+        {name: 'Rice (Regular / Basmati)', marathi: 'तांदूळ (रोजचा / बासमती)'},
+        {name: 'Wheat', marathi: 'गहू'},
+        {name: 'Jowar (Sorghum)', marathi: 'ज्वारी'},
+        {name: 'Bajra (Pearl Millet)', marathi: 'बाजरी'},
+        {name: 'Ragi (Finger Millet)', marathi: 'नाचणी'},
+        {name: 'Wheat Flour (Atta)', marathi: 'गव्हाचे पीठ'},
+        {name: 'Maida (Refined Flour)', marathi: 'मैदा'},
+        {name: 'Rawa / Suji (Semolina)', marathi: 'रवा / सूजी'},
+        {name: 'Besan (Gram Flour)', marathi: 'बेसन'},
+        {name: 'Rice Flour', marathi: 'तांदळाचे पीठ'},
+        {name: 'Sabudana (Tapioca Pearls)', marathi: 'साबूदाणा'},
+        {name: 'Poha (Flattened Rice)', marathi: 'पोहे'},
+        {name: 'Kurmure (Puffed Rice)', marathi: 'कुरमुरे / चुरमुरे'}
+      ]
+    },
+    {
+      id: 'pulses',
+      title: 'Pulses & Legumes (डाळी आणि कडधान्ये)',
+      icon: 'bi-basket3-fill',
+      items: [
+        {name: 'Toor Dal (Arhar)', marathi: 'तूर डाळ'},
+        {name: 'Moong Dal', marathi: 'मूग डाळ'},
+        {name: 'Masoor Dal', marathi: 'मसूर डाळ'},
+        {name: 'Chana Dal', marathi: 'चणा डाळ'},
+        {name: 'Urad Dal', marathi: 'उडीद डाळ'},
+        {name: 'Whole Moong', marathi: 'आख्खे मूग'},
+        {name: 'Whole Urad', marathi: 'काळे उडीद'},
+        {name: 'Chhole (Chickpeas)', marathi: 'हरभरे / चणे'},
+        {name: 'Rajma (Kidney Beans)', marathi: 'राजमा'},
+        {name: 'Peanuts', marathi: 'शेंगदाणे'}
+      ]
+    },
+    {
+      id: 'oils',
+      title: 'Oil, Fats & Pickles (तेल, तूप आणि लोणचे)',
+      icon: 'bi-droplet-fill',
+      items: [
+        {name: 'Cooking Oil (Groundnut/Sunflower)', marathi: 'खाण्याचे तेल (शेंगदाणा/सूर्यफूल)'},
+        {name: 'Ghee', marathi: 'तूप'},
+        {name: 'Mustard Oil', marathi: 'मोहरीचे तेल'},
+        {name: 'Coconut Oil', marathi: 'नारळाचे तेल'},
+        {name: 'Butter', marathi: 'लोणी'},
+        {name: 'Pickles (Mango/Lemon)', marathi: 'लोणचे (आंबा/लिंबू)'},
+        {name: 'Papad', marathi: 'पापड'},
+        {name: 'Vermicelli (Sevaiya)', marathi: 'शेवया'}
+      ]
+    },
+    {
+      id: 'spices',
+      title: 'Spices & Seasonings (मसाले)',
+      icon: 'bi-fire',
+      items: [
+        {name: 'Salt', marathi: 'मीठ'},
+        {name: 'Turmeric Powder', marathi: 'हळद पावडर'},
+        {name: 'Red Chili Powder', marathi: 'लाल तिखट / मिरची पावडर'},
+        {name: 'Coriander Powder', marathi: 'धने पावडर'},
+        {name: 'Cumin Seeds', marathi: 'जीरा / जिरे'},
+        {name: 'Mustard Seeds', marathi: 'मोहरी'},
+        {name: 'Hing (Asafoetida)', marathi: 'हिंग'},
+        {name: 'Garam Masala', marathi: 'गरम मसाला'},
+        {name: 'Ginger-Garlic Paste', marathi: 'आले-लसूण पेस्ट'},
+        {name: 'Kanda Lasun Masala', marathi: 'कांदा-लसूण मसाला'},
+        {name: 'Black Salt', marathi: 'काळ मीठ'},
+        {name: 'Amchur Powder', marathi: 'आमचूर पावडर'},
+        {name: 'Cashews', marathi: 'काजू'},
+        {name: 'Almonds (Badam)', marathi: 'बदाम'},
+        {name: 'Dry Coconut (Copra)', marathi: 'खोबरे (सुके)'}
+      ]
+    },
+    {
+      id: 'sweeteners',
+      title: 'Sweeteners & Beverages (गोड पदार्थ आणि पेय)',
+      icon: 'bi-cup-hot-fill',
+      items: [
+        {name: 'Sugar', marathi: 'साखर'},
+        {name: 'Jaggery', marathi: 'गूळ'},
+        {name: 'Honey', marathi: 'मध'},
+        {name: 'Tea Powder/Leaves', marathi: 'चहा पावडर'},
+        {name: 'Coffee', marathi: 'कॉफी'},
+        {name: 'Milk Powder', marathi: 'दूध पावडर'},
+        {name: 'Juice (Ready-made)', marathi: 'रस (रेडीमेड)'},
+        {name: 'Biscuits/Cookies', marathi: 'बिस्किटे'},
+        {name: 'Jam / Jelly', marathi: 'जाम / जेली'},
+        {name: 'Dates (Khajur)', marathi: 'शेकटा'},
+        {name: 'Raisins (Manuke)', marathi: 'मनुके'}
+      ]
+    },
+    {
+      id: 'vegetables',
+      title: 'Vegetables (भाज्या)',
+      icon: 'bi-basket2-fill',
+      items: [
+        {name: 'Potato', marathi: 'बटाटा'},
+        {name: 'Onion', marathi: 'कांदा'},
+        {name: 'Tomato', marathi: 'टोमॅटो'},
+        {name: 'Green Chillies', marathi: 'हिरव्या मिरच्या'},
+        {name: 'Coriander (Dhania)', marathi: 'कोथिंबीर'},
+        {name: 'Ginger', marathi: 'आलं'},
+        {name: 'Garlic', marathi: 'लसूण'},
+        {name: 'Cucumber', marathi: 'काकडी'},
+        {name: 'Carrot', marathi: 'गाजर'},
+        {name: 'Beetroot', marathi: 'बीट'},
+        {name: 'Cabbage', marathi: 'कोबी'},
+        {name: 'Cauliflower', marathi: 'फ्लॉवर'},
+        {name: 'Ladyfinger (Bhindi)', marathi: 'भेंडी'},
+        {name: 'Brinjal (Eggplant)', marathi: 'वांगी'},
+        {name: 'Spinach (Palak)', marathi: 'पालक'},
+        {name: 'Bell Pepper (Capsicum)', marathi: 'शिमला मिरची'},
+        {name: 'Peas', marathi: 'वाटाणे'},
+        {name: 'Green Beans', marathi: 'घेवडा'},
+        {name: 'Radish', marathi: 'मुळा'},
+        {name: 'Bottle Gourd (Lauki)', marathi: 'दूधी / लौकी'}
+      ]
+    },
+    {
+      id: 'fruits',
+      title: 'Fruits (फळे)',
+      icon: 'bi-apple',
+      items: [
+        {name: 'Banana', marathi: 'केळी'},
+        {name: 'Apple', marathi: 'सफरचंद'},
+        {name: 'Orange', marathi: 'संत्रा'},
+        {name: 'Mango (seasonal)', marathi: 'आंबा'},
+        {name: 'Grapes', marathi: 'द्राक्षे'},
+        {name: 'Pomegranate', marathi: 'डाळिंब'},
+        {name: 'Papaya', marathi: 'पपई'},
+        {name: 'Watermelon', marathi: 'टरबूज'},
+        {name: 'Pineapple', marathi: 'अननस'},
+        {name: 'Guava', marathi: 'पेरू'},
+        {name: 'Lemon / Lime', marathi: 'लिंबू'},
+        {name: 'Kiwi', marathi: 'किवी'},
+        {name: 'Strawberries', marathi: 'स्ट्रॉबेरी'}
+      ]
+    },
+    {
+      id: 'dairy',
+      title: 'Dairy & Bakery (दुग्धजन्य पदार्थ)',
+      icon: 'bi-cup-straw',
+      items: [
+        {name: 'Milk (fresh)', marathi: 'दूध (ताजे)'},
+        {name: 'Curd / Yogurt', marathi: 'दही'},
+        {name: 'Paneer', marathi: 'पनीर'},
+        {name: 'Butter', marathi: 'लोणी'},
+        {name: 'Cheese', marathi: 'चीज'},
+        {name: 'Eggs', marathi: 'अंडी'},
+        {name: 'Buns / Pav', marathi: 'पाव'},
+        {name: 'Cake / Pastry', marathi: 'केक'},
+        {name: 'Cream', marathi: 'मलई'},
+        {name: 'Buttermilk', marathi: 'ताक'}
+      ]
+    },
+    {
+      id: 'snacks',
+      title: 'Snacks & Beverages (स्नॅक्स)',
+      icon: 'bi-bag-fill',
+      items: [
+        {name: 'Chips', marathi: 'चिप्स'},
+        {name: 'Namkeen', marathi: 'नमकीन'},
+        {name: 'Sweets / Mithai', marathi: 'मिठाई'},
+        {name: 'Cold Drinks', marathi: 'कोल्ड ड्रिंक'},
+        {name: 'Juice (Tetra)', marathi: 'रस (टेट्रा पॅक)'},
+        {name: 'Energy Drinks', marathi: 'एनर्जी ड्रिंक'},
+        {name: 'Mineral Water', marathi: 'पाण्याची बाटली'},
+        {name: 'Chocolates', marathi: 'चॉकलेट'},
+        {name: 'Cookies', marathi: 'कुकीज'},
+        {name: 'Ice Cream', marathi: 'आईस्क्रीम'}
+      ]
+    },
+    {
+      id: 'cleaning',
+      title: 'Cleaning & Household (घरगुती)',
+      icon: 'bi-house-fill',
+      items: [
+        {name: 'Detergent Powder/Liquid', marathi: 'कपडे धुण्याची पावडर/डिटर्जंट'},
+        {name: 'Dishwashing Liquid', marathi: 'भांडी घासण्याचा साबण/लिक्विड'},
+        {name: 'Floor Cleaner', marathi: 'फरशी पुसण्याचे लिक्विड'},
+        {name: 'Toilet Cleaner', marathi: 'टॉयलेट क्लीनर'},
+        {name: 'Incense Sticks (Agarbatti)', marathi: 'अगरबत्ती'},
+        {name: 'Matchbox', marathi: 'काड्यापेट्टी'},
+        {name: 'Paper Napkins', marathi: 'कागदी नॅपकिन'},
+        {name: 'Garbage Bags', marathi: 'कचऱ्याची पिशवी'},
+        {name: 'Sanitary Napkins', marathi: 'सॅनिटरी पॅड'},
+        {name: 'Mop / Broom', marathi: 'पोचा / झाडू'}
+      ]
+    },
+    {
+      id: 'toiletries',
+      title: 'Personal Care (वैयक्तिक काळजी)',
+      icon: 'bi-scissors',
+      items: [
+        {name: 'Bathing Soap', marathi: 'अंघोळीचा साबण'},
+        {name: 'Toothpaste', marathi: 'टूथपेस्ट'},
+        {name: 'Toothbrush', marathi: 'टूथब्रश'},
+        {name: 'Hair Oil', marathi: 'हेअर ऑइल / तेल'},
+        {name: 'Shampoo', marathi: 'शॅम्पू'},
+        {name: 'Conditioner', marathi: 'कंडिशनर'},
+        {name: 'Body Lotion', marathi: 'बॉडी लोशन'},
+        {name: 'Hand Wash', marathi: 'हँड वॉश'},
+        {name: 'Shaving Cream', marathi: 'शेव्हिंग क्रीम'},
+        {name: 'Deodorant', marathi: 'डिओडरंट'},
+        {name: 'Facewash', marathi: 'फेसवॉश'},
+        {name: 'Moisturizer', marathi: 'मॉइश्चरायझर'},
+        {name: 'Sunscreen', marathi: 'सनस्क्रीन'},
+        {name: 'Tissues', marathi: 'टिश्यू'},
+        {name: 'Wet Wipes', marathi: 'वेट वाईप्स'}
+      ]
+    },
+    {
+      id: 'misc',
+      title: 'Miscellaneous (इतर)',
+      icon: 'bi-three-dots',
+      items: [
+        {name: 'Lighters / Matches', marathi: 'लायटर / माचिस'},
+        {name: 'Battery (AA / AAA)', marathi: 'बॅटरी'},
+        {name: 'Aluminium Foil', marathi: 'अल्युमिनियम फॉइल'},
+        {name: 'Cling Film', marathi: 'क्लिंग फिल्म'},
+        {name: 'Tea Strainer', marathi: 'चहाची चाळणी'},
+        {name: 'Candles', marathi: 'मेणबत्त्या'},
+        {name: 'Mosquito Repellent', marathi: 'मच्छर भगाने'},
+        {name: 'Instant Noodles', marathi: 'मॅगी / नूडल्स'}
+      ]
+    }
+  ];
+
+  const listWrap = document.getElementById('listWrap');
+  let customItemCounter = 0;
+
+  function createItemRow(itemData, sectionId, idx, isCustom = false) {
+    const row = document.createElement('div');
+    row.className = 'item-row d-flex align-items-center gap-2';
+    row.dataset.itemIndex = idx;
+    row.dataset.isCustom = isCustom;
+    
+    // Store searchable text (both English and Marathi)
+    const searchableText = (itemData.name + ' ' + (itemData.marathi || '')).toLowerCase();
+    row.dataset.itemName = searchableText;
+
+    // Serial number
+    const sr = document.createElement('div');
+    sr.className = 'sr-number';
+    sr.textContent = idx + 1;
+
+    // Item name
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'item-name';
+    nameDiv.innerHTML = itemData.name;
+    if (itemData.marathi) {
+      nameDiv.innerHTML += `<div class="item-name-marathi">${itemData.marathi}</div>`;
+    }
+
+    // Checkbox
+    const checkDiv = document.createElement('div');
+    checkDiv.className = 'form-check';
+    const checkbox = document.createElement('input');
+    checkbox.className = 'form-check-input item-checkbox';
+    checkbox.type = 'checkbox';
+    checkbox.id = sectionId + '-item-' + idx + (isCustom ? '-custom' : '');
+    checkDiv.appendChild(checkbox);
+
+    // Quantity input
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'text';
+    qtyInput.className = 'form-control qty-input';
+    qtyInput.placeholder = 'qty';
+    qtyInput.style.width = '110px';
+
+    row.appendChild(sr);
+    row.appendChild(nameDiv);
+    row.appendChild(checkDiv);
+    row.appendChild(qtyInput);
+
+    // Delete button for custom items
+    if (isCustom) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>';
+      deleteBtn.onclick = function(e) {
+        e.stopPropagation();
+        if (confirm('Remove this custom item?')) {
+          row.remove();
+          updateCounter(row.closest('.section-card'));
+          renumberItems(row.closest('.section-body'));
+        }
+      };
+      row.appendChild(deleteBtn);
+    }
+
+    // Checkbox event
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        row.classList.add('checked');
+      } else {
+        row.classList.remove('checked');
+      }
+      updateCounter(row.closest('.section-card'));
+    });
+
+    return row;
+  }
+
+  function renumberItems(bodyElement) {
+    const rows = bodyElement.querySelectorAll('.item-row');
+    rows.forEach((row, idx) => {
+      const srNum = row.querySelector('.sr-number');
+      if (srNum) srNum.textContent = idx + 1;
+      row.dataset.itemIndex = idx;
+    });
+  }
+
+  function createSection(section, idx){
+    const sec = document.createElement('div');
+    sec.className = 'section-card';
+    sec.dataset.id = section.id;
+    sec.style.animationDelay = (idx * 0.1) + 's';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'section-header' + (section.id === 'grains' ? ' kirana-header' : '');
+    
+    const headerRow = document.createElement('div');
+    headerRow.className = 'd-flex justify-content-between align-items-center';
+
+    const leftDiv = document.createElement('div');
+    const title = document.createElement('h3');
+    title.className = 'section-title';
+    title.innerHTML = `<i class="bi ${section.icon}"></i> ${section.title}`;
+    
+    const meta = document.createElement('div');
+    meta.className = 'section-meta';
+    meta.textContent = section.items.length + ' items';
+    
+    leftDiv.appendChild(title);
+    leftDiv.appendChild(meta);
+
+    const rightDiv = document.createElement('div');
+    rightDiv.className = 'd-flex align-items-center gap-3';
+    
+    const counter = document.createElement('span');
+    counter.className = 'counter-badge';
+    counter.textContent = '0/' + section.items.length;
+    
+    const chevron = document.createElement('i');
+    chevron.className = 'bi bi-chevron-down chevron-icon' + (idx === 0 ? ' rotated' : '');
+    
+    rightDiv.appendChild(counter);
+    rightDiv.appendChild(chevron);
+
+    headerRow.appendChild(leftDiv);
+    headerRow.appendChild(rightDiv);
+    header.appendChild(headerRow);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'section-body collapse' + (idx === 0 ? ' show' : '');
+    body.id = 'collapse-' + section.id;
+
+    // Items
+    section.items.forEach((item, i) => {
+      const row = createItemRow(item, section.id, i, false);
+      body.appendChild(row);
+    });
+
+    // Add Custom Item Button
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-item-btn';
+    addBtn.innerHTML = '<i class="bi bi-plus-circle-fill"></i> Add Custom Item';
+    addBtn.onclick = function(e) {
+      e.stopPropagation();
+      const itemName = prompt('Enter item name (in any language):');
+      if (itemName && itemName.trim() !== '') {
+        const currentItemCount = body.querySelectorAll('.item-row').length;
+        const customItem = {
+          name: itemName.trim(),
+          marathi: ''
+        };
+        const newRow = createItemRow(customItem, section.id, currentItemCount, true);
+        body.insertBefore(newRow, addBtn);
+        updateCounter(sec);
+        renumberItems(body);
+      }
+    };
+    body.appendChild(addBtn);
+
+    sec.appendChild(header);
+    sec.appendChild(body);
+
+    // Toggle collapse
+    header.style.cursor = 'pointer';
+    header.addEventListener('click', () => {
+      const bsCollapse = new bootstrap.Collapse(body, {
+        toggle: true
+      });
+      chevron.classList.toggle('rotated');
+    });
+
+    return sec;
+  }
+
+  // Render all sections
+  SECTIONS.forEach((s, idx) => {
+    const secEl = createSection(s, idx);
+    listWrap.appendChild(secEl);
+  });
+
+  // Update counter
+  function updateCounter(sectionEl) {
+    const checkboxes = sectionEl.querySelectorAll('.item-checkbox');
+    const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
+      const row = cb.closest('.item-row');
+      return !row.classList.contains('hidden');
+    });
+    let checked = 0;
+    visibleCheckboxes.forEach(cb => { if(cb.checked) checked++; });
+    const total = visibleCheckboxes.length;
+    const counter = sectionEl.querySelector('.counter-badge');
+    if(counter) counter.textContent = checked + '/' + total;
+  }
+
+  // Search functionality
+  const searchInput = document.getElementById('searchInput');
+  const noResults = document.getElementById('noResults');
+
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase().trim();
+    let hasResults = false;
+
+    if (searchTerm === '') {
+      // Show all
+      document.querySelectorAll('.section-card').forEach(sec => {
+        sec.classList.remove('hidden');
+        sec.querySelectorAll('.item-row').forEach(row => {
+          row.classList.remove('hidden');
+        });
+        updateCounter(sec);
+      });
+      noResults.style.display = 'none';
+      return;
+    }
+
+    // Filter items
+    document.querySelectorAll('.section-card').forEach(sec => {
+      let sectionHasResults = false;
+      sec.querySelectorAll('.item-row').forEach(row => {
+        const itemName = row.dataset.itemName;
+        if (itemName.includes(searchTerm)) {
+          row.classList.remove('hidden');
+          sectionHasResults = true;
+          hasResults = true;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      if (sectionHasResults) {
+        sec.classList.remove('hidden');
+        // Auto-expand section with results
+        const body = sec.querySelector('.section-body');
+        const chevron = sec.querySelector('.chevron-icon');
+        if (!body.classList.contains('show')) {
+          body.classList.add('show');
+          chevron.classList.add('rotated');
+        }
+      } else {
+        sec.classList.add('hidden');
+      }
+      updateCounter(sec);
+    });
+
+    if (hasResults) {
+      noResults.style.display = 'none';
+    } else {
+      noResults.style.display = 'block';
+    }
+  });
+
+  // Share button - Show alert instead of opening WhatsApp
+  document.getElementById('shareBtn').addEventListener('click', () => {
+    const phone = document.getElementById('waNumber').value.trim();
+    
+    if(!phone){
+      alert('📱 Please enter a WhatsApp number!');
+      return;
+    }
+    
+    // Collect checked items (including custom items)
+    const sections = Array.from(document.querySelectorAll('.section-card'));
+    const collected = [];
+    let totalItemsCount = 0;
+    
+    sections.forEach(sec => {
+      const title = sec.querySelector('.section-title').textContent.trim();
+      const rows = Array.from(sec.querySelectorAll('.item-row'));
+      const items = [];
+      
+      rows.forEach(row => {
+        const checkbox = row.querySelector('.item-checkbox');
+        if(checkbox && checkbox.checked && !row.classList.contains('hidden')){
+          const nameDiv = row.querySelector('.item-name');
+          
+          // Priority: Marathi first, then English/Custom
+          let displayName = '';
+          const marathiDiv = nameDiv.querySelector('.item-name-marathi');
+          
+          if(marathiDiv && marathiDiv.textContent.trim() !== ''){
+            // Use Marathi name if available
+            displayName = marathiDiv.textContent.trim();
+          } else {
+            // Use English or custom name
+            const nameElement = nameDiv.cloneNode(true);
+            const marathiDivClone = nameElement.querySelector('.item-name-marathi');
+            if(marathiDivClone) marathiDivClone.remove();
+            displayName = nameElement.textContent.trim();
+          }
+          
+          const qty = row.querySelector('.qty-input').value.trim();
+          items.push({name: displayName, qty});
+          totalItemsCount++;
+        }
+      });
+      
+      if(items.length > 0){
+        collected.push({title, items});
+      }
+    });
+    
+    if(collected.length === 0){
+      alert('❌ No items are checked!\n\nPlease check items you want to add to your shopping list.');
+      return;
+    }
+    
+    // Get current date in dd/mm/yyyy format
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
+    
+    // Format message with Marathi title and serial numbers
+    let message = '🛒 *किराणा खरेदीची यादी*\n';
+    message += `📅 दिनांक: ${formattedDate}\n`;
+    message += `📝 एकूण वस्तू: ${totalItemsCount}\n`;
+    message += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
+    
+    let serialNumber = 1;
+    collected.forEach((sec, idx) => {
+      const sectionTitle = sec.title.split('(')[0].trim(); // Remove Marathi part from section title
+      message += `*${sectionTitle}*\n`;
+      sec.items.forEach(item => {
+        if(item.qty){
+          message += `${serialNumber}. ${item.name} — ${item.qty}\n`;
+        } else {
+          message += `${serialNumber}. ${item.name}\n`;
+        }
+        serialNumber++;
+      });
+      message += '\n';
+    });
+    
+    message += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    message += `📱 ${phone}`;
+    
+    // Show alert with the list
+    alert('✅ YOUR SHOPPING LIST:\n\n' + message + '\n\n💡 Click OK to send via WhatsApp.');
+    
+    // Also prepare WhatsApp link (optional - user can choose)
+    let digits = phone.replace(/\D/g, '');
+    if(digits.length === 10){
+      digits = '91' + digits;
+    }
+    
+    const encoded = encodeURIComponent(message);
+    const waUrl = `https://wa.me/${digits}?text=${encoded}`;
+    
+    // Open WhatsApp
+    window.open(waUrl, '_blank');
+  });
+
+})();
+</script>
+
+</body>
+</html>
