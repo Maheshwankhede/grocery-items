@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Jar Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e8e8e8;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+
+        /* Total Card */
+        .total-card {
+            background: linear-gradient(135deg, #7b2cbf 0%, #00d4ff 100%);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(123, 44, 191, 0.3);
+        }
+
+        .total-card .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .total-card .count {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+
+        .total-card .unit {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Input Card */
+        .input-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .input-card h3 {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .input-wrapper label {
+            display: block;
+            font-size: 0.75rem;
+            color: #8892b0;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 16px;
+            margin-top: 15px;
+            background: linear-gradient(90deg, #7b2cbf, #00d4ff);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(123, 44, 191, 0.4);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        /* History Section */
+        .history-section h3 {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        /* Month Card */
+        .month-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .month-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .month-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .month-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #7b2cbf, #00d4ff);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .month-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .month-year {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+
+        .month-total {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .month-total .badge {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .month-total .chevron {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            color: #8892b0;
+        }
+
+        .month-card.expanded .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Entries List */
+        .entries-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .month-card.expanded .entries-list {
+            max-height: 500px;
+        }
+
+        .entry-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .entry-date {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .entry-date .day {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .entry-date .weekday {
+            font-size: 0.85rem;
+            color: #8892b0;
+        }
+
+        .entry-count {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .entry-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .entry-count-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 4px 8px;
+        }
+
+        .btn-count {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-minus {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .btn-minus:hover {
+            background: rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-plus {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+
+        .btn-plus:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        .entry-delete {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            font-size: 1rem;
+            padding: 5px;
+        }
+
+        .entry-delete:hover {
+            opacity: 1;
+        }
+
+        /* Backup Section */
+        .backup-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .backup-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-backup {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #8892b0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-backup:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8892b0;
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1a1a2e;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 14px 24px;
+            border-radius: 10px;
+            color: #00d4ff;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .total-card .count {
+                font-size: 2.5rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-wrapper {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💧 Water Jar Tracker</h1>
+            <p>Track your water jar deliveries</p>
+        </div>
+
+        <!-- Total Card -->
+        <div class="total-card">
+            <div class="label" id="totalLabel">This Month</div>
+            <div class="count" id="totalCount">0</div>
+            <div class="unit" id="totalUnit">jars in December</div>
+        </div>
+
+        <!-- Input Card -->
+        <div class="input-card">
+            <h3>📝 Add Delivery</h3>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <label>Date</label>
+                    <input type="date" id="dateField">
+                </div>
+                <div class="input-wrapper">
+                    <label>Quantity</label>
+                    <input type="number" id="countField" min="1" value="1">
+                </div>
+            </div>
+            <button class="btn-add" onclick="addEntry()">+ Add Entry</button>
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section">
+            <h3>📊 Monthly History</h3>
+            <div id="historyContainer"></div>
+        </div>
+
+        <!-- Backup Section -->
+        <div class="backup-section">
+            <div class="backup-buttons">
+                <button class="btn-backup" onclick="downloadBackup()">⬇️ Download Backup</button>
+                <label class="btn-backup" style="text-align: center;">
+                    ⬆️ Restore Backup
+                    <input type="file" class="file-input" id="fileInput" accept=".json" onchange="uploadBackup()">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Load stored entries
+        let entries = JSON.parse(localStorage.getItem("waterData") || "[]");
+
+        // Month names
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        // Set default date to today
+        function setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("dateField").value = today;
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 2500);
+        }
+
+        // Add new entry
+        function addEntry() {
+            const date = document.getElementById("dateField").value;
+            const count = parseInt(document.getElementById("countField").value);
+
+            if (!date || !count || count < 1) {
+                showToast("⚠️ Please enter valid date and quantity");
+                return;
+            }
+
+            // Check for existing entries on the same date
+            const existingEntries = entries.filter(e => e.date === date);
+            const existingTotal = existingEntries.reduce((sum, e) => sum + e.count, 0);
+
+            if (existingEntries.length > 0) {
+                const dateObj = new Date(date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const confirmed = confirm(
+                    `⚠️ Duplicate Date Detected!\n\n` +
+                    `📅 ${formattedDate}\n` +
+                    `📦 Already added: ${existingTotal} jar${existingTotal > 1 ? 's' : ''}\n\n` +
+                    `Are you sure you want to add ${count} more jar${count > 1 ? 's' : ''}?`
+                );
+
+                if (!confirmed) {
+                    showToast("❌ Entry cancelled");
+                    return;
+                }
+            }
+
+            entries.push({ date, count });
+            // Sort by date descending
+            entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            localStorage.setItem("waterData", JSON.stringify(entries));
+
+            renderHistory();
+            updateTotal();
+            showToast("✅ Entry added successfully!");
+
+            // Reset to defaults
+            setDefaultDate();
+            document.getElementById("countField").value = 1;
+        }
+
+        // Adjust count for a specific date (+1 or -1)
+        function adjustCount(date, delta) {
+            // Find all entries for this date and calculate total
+            const entriesForDate = entries.filter(e => e.date === date);
+            const currentTotal = entriesForDate.reduce((sum, e) => sum + e.count, 0);
+            const newTotal = currentTotal + delta;
+
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            if (newTotal <= 0) {
+                // If count would become 0 or negative, ask to delete all
+                deleteEntriesByDate(date);
+                return;
+            }
+
+            if (delta > 0) {
+                // Adding: confirm first
+                const confirmed = confirm(
+                    `➕ Add 1 jar?\n\n` +
+                    `📅 ${formattedDate}\n` +
+                    `📦 Current: ${currentTotal} jar${currentTotal > 1 ? 's' : ''}\n` +
+                    `📦 New total: ${newTotal} jars`
+                );
+
+                if (!confirmed) {
+                    showToast("❌ Cancelled");
+                    return;
+                }
+
+                // Adding: create new entry with count 1
+                entries.push({ date, count: 1 });
+                showToast("➕ Added 1 jar");
+            } else {
+                // Removing: confirm first
+                const confirmed = confirm(
+                    `➖ Remove 1 jar?\n\n` +
+                    `📅 ${formattedDate}\n` +
+                    `📦 Current: ${currentTotal} jar${currentTotal > 1 ? 's' : ''}\n` +
+                    `📦 New total: ${newTotal} jar${newTotal > 1 ? 's' : ''}`
+                );
+
+                if (!confirmed) {
+                    showToast("❌ Cancelled");
+                    return;
+                }
+
+                // Removing: find last entry for this date and decrement or remove
+                for (let i = entries.length - 1; i >= 0; i--) {
+                    if (entries[i].date === date) {
+                        if (entries[i].count > 1) {
+                            entries[i].count -= 1;
+                        } else {
+                            entries.splice(i, 1);
+                        }
+                        break;
+                    }
+                }
+                showToast("➖ Removed 1 jar");
+            }
+
+            entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            localStorage.setItem("waterData", JSON.stringify(entries));
+            renderHistory();
+            updateTotal();
+        }
+
+        // Delete all entries for a specific date
+        function deleteEntriesByDate(date) {
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const entriesForDate = entries.filter(e => e.date === date);
+            const totalJars = entriesForDate.reduce((sum, e) => sum + e.count, 0);
+
+            if (confirm(`Delete all entries for ${formattedDate}?\n\nTotal: ${totalJars} jar${totalJars > 1 ? 's' : ''}`)) {
+                entries = entries.filter(e => e.date !== date);
+                localStorage.setItem("waterData", JSON.stringify(entries));
+                renderHistory();
+                updateTotal();
+                showToast("🗑️ All entries deleted");
+            }
+        }
+
+        // Toggle month expansion
+        function toggleMonth(monthKey) {
+            const card = document.getElementById(`month-${monthKey}`);
+            card.classList.toggle("expanded");
+        }
+
+        // Update total count (current month only)
+        function updateTotal() {
+            const now = new Date();
+            const currentMonth = now.toISOString().substring(0, 7); // YYYY-MM
+            const currentMonthName = monthNames[now.getMonth()];
+
+            // Filter entries for current month only
+            const currentMonthEntries = entries.filter(e => e.date.substring(0, 7) === currentMonth);
+            const monthTotal = currentMonthEntries.reduce((sum, e) => sum + e.count, 0);
+
+            document.getElementById("totalCount").textContent = monthTotal;
+            document.getElementById("totalLabel").textContent = "This Month";
+            document.getElementById("totalUnit").textContent = `jars in ${currentMonthName}`;
+        }
+
+        // Render history
+        function renderHistory() {
+            const container = document.getElementById("historyContainer");
+
+            if (entries.length === 0) {
+                container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">📭</div>
+                <p>No entries yet. Add your first delivery!</p>
+            </div>
+        `;
+                return;
+            }
+
+            // Group by month, then consolidate by date within each month
+            const monthly = {};
+            entries.forEach((e, idx) => {
+                const monthKey = e.date.substring(0, 7); // YYYY-MM
+                if (!monthly[monthKey]) {
+                    monthly[monthKey] = { dates: {}, total: 0 };
+                }
+
+                // Consolidate by date
+                if (!monthly[monthKey].dates[e.date]) {
+                    monthly[monthKey].dates[e.date] = { count: 0, indices: [] };
+                }
+                monthly[monthKey].dates[e.date].count += e.count;
+                monthly[monthKey].dates[e.date].indices.push(idx);
+                monthly[monthKey].total += e.count;
+            });
+
+            // Sort months descending
+            const sortedMonths = Object.keys(monthly).sort().reverse();
+
+            let html = "";
+            sortedMonths.forEach((monthKey, monthIndex) => {
+                const [year, month] = monthKey.split("-");
+                const monthName = monthNames[parseInt(month) - 1];
+                const data = monthly[monthKey];
+                const isExpanded = monthIndex === 0 ? "expanded" : ""; // First month expanded
+
+                html += `
+            <div class="month-card ${isExpanded}" id="month-${monthKey}">
+                <div class="month-header" onclick="toggleMonth('${monthKey}')">
+                    <div class="month-info">
+                        <div class="month-icon">📅</div>
+                        <div>
+                            <div class="month-name">${monthName}</div>
+                            <div class="month-year">${year}</div>
+                        </div>
+                    </div>
+                    <div class="month-total">
+                        <span class="badge">${data.total} jars</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                </div>
+                <div class="entries-list">
+        `;
+
+                // Sort dates descending within month
+                const sortedDates = Object.keys(data.dates).sort().reverse();
+
+                sortedDates.forEach(date => {
+                    const dateData = data.dates[date];
+                    const dateObj = new Date(date);
+                    const day = dateObj.getDate();
+                    const weekday = weekdays[dateObj.getDay()];
+                    const monthShort = monthNames[dateObj.getMonth()].substring(0, 3);
+
+                    html += `
+                <div class="entry-item">
+                    <div class="entry-date">
+                        <div class="day">${day}</div>
+                        <div class="weekday">${weekday}, ${monthShort}</div>
+                    </div>
+                    <div class="entry-actions">
+                        <div class="entry-count-controls">
+                            <button class="btn-count btn-minus" onclick="adjustCount('${date}', -1)" title="Remove 1 jar">−</button>
+                            <span class="entry-count">${dateData.count}</span>
+                            <button class="btn-count btn-plus" onclick="adjustCount('${date}', 1)" title="Add 1 jar">+</button>
+                        </div>
+                        <button class="entry-delete" onclick="deleteEntriesByDate('${date}')" title="Delete all">🗑️</button>
+                    </div>
+                </div>
+            `;
+                });
+
+                html += `
+                </div>
+            </div>
+        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Download backup
+        function downloadBackup() {
+            if (entries.length === 0) {
+                showToast("⚠️ No data to backup");
+                return;
+            }
+
+            const dataStr = JSON.stringify(entries, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `water_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+            showToast("✅ Backup downloaded!");
+        }
+
+        // Upload backup
+        function uploadBackup() {
+            const file = document.getElementById("fileInput").files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data)) {
+                        entries = data;
+                        entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+                        localStorage.setItem("waterData", JSON.stringify(entries));
+                        renderHistory();
+                        updateTotal();
+                        showToast("✅ Backup restored successfully!");
+                    } else {
+                        showToast("⚠️ Invalid backup file format");
+                    }
+                } catch (err) {
+                    showToast("⚠️ Error reading backup file");
+                }
+            };
+            reader.readAsText(file);
+
+            // Reset file input
+            document.getElementById("fileInput").value = "";
+        }
+
+        // Initialize
+        setDefaultDate();
+        renderHistory();
+        updateTotal();
+    </script>
+
+</body>
+
+</html>
